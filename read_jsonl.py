@@ -1,51 +1,68 @@
 import json
 import re
 
-def ReadJsonl(lines):
-  tweets = []
 
-  # loop over json list file
-  for line in lines:
-    # parse as json object
-    json_object = json.loads(line.strip())
+def ReadJsonl(raw_tweets_file_name, corpus_file_name):
+    raw_tweets_file = open(raw_tweets_file_name, "r")
+    corpus_file = open(corpus_file_name, "w+")
 
-    # parse tweet to remove custom encoding (emoji, weird non-ascii chars)
-    tweet = json_object["full_text"].encode('ascii', 'ignore').decode('ascii').split()
+    # loop over json list file
+    for line in raw_tweets_file:
+        # parse as json object
+        json_object = json.loads(line)
 
-    # if tweet couldn't be parsed, avoid it
-    if tweet == [] or TweetHasData(tweet) == False:
-      continue
+        # parse tweet to remove custom encoding (emoji, weird non-ascii chars)
+        tweet = (
+            json_object["full_text"].encode("ascii", "ignore").decode("ascii").split()
+        )
 
-    # apply regex filter to each word
-    tweet = [re.sub('[^A-Za-z0-9@#]+', '', word) for word in tweet]
+        # if tweet couldn't be parsed, avoid it
+        if tweet == [] or hasData(tweet) == False:
+            continue
 
-    # remove all mentions, urls, hashtags and empty words
-    tweet = [word for word in tweet if not ("@" in word or "http" in word or "#" in word or "" == word or " " == word)]
+        # apply regex filter to each word
+        tweet = [re.sub("[^A-Za-z0-9@#]+", "", word) for word in tweet]
 
-    # check if tweet is a retweet
-    if CheckRetweet(tweet):
-      continue
-    
-    # tweets[i] is an array
-    # tweets[i][j] is a word
-    if TweetHasData(tweet):
-      tweet.append("\n")
-      tweets.append(tweet)
+        # remove all mentions, urls, hashtags and empty words
+        tweet = [
+            word.lower()
+            for word in tweet
+            if not (
+                "@" in word
+                or "http" in word
+                or "#" in word
+                or "" == word
+                or " " == word
+            )
+        ]
 
-  return tweets
+        # check if tweet is a retweet
+        if checkRetweet(tweet):
+            continue
 
-def CheckRetweet(tweet):
-  for word in tweet:
-    word = word.lower()
+        # tweet is an array
+        # tweet[i] is a word
+        if hasData(tweet):
+            tweet.append("\n")
+            corpus_file.write(" ".join([str(elem) for elem in tweet]))
 
-    if word == "rt":
-      return True
+    raw_tweets_file.close()
+    corpus_file.close()
 
-  return False
 
-def TweetHasData(tweet):
-  for word in tweet:
-    if word != "" and word != " ":
-      return True
+def checkRetweet(tweet):
+    for word in tweet:
+        word = word.lower()
 
-  return False
+        if word == "rt":
+            return True
+
+    return False
+
+
+def hasData(tweet):
+    for word in tweet:
+        if word != "" and word != " ":
+            return True
+
+    return False

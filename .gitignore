@@ -1,3 +1,13 @@
+# huge files
+corpus/*
+data/*
+models/*
+
+# keep examples
+!corpus/example.corpus
+!data/example.jsonl
+!models/example.w2v
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
