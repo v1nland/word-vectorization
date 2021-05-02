@@ -1,5 +1,11 @@
 import json
 import re
+from helper.utils import validateJSON
+from helper.utils import checkRetweet
+from helper.utils import hasData
+
+RAW_TWEETS_FILE_NAME = "data/example.jsonl"
+CORPUS_FILE_NAME = "corpus/example.corpus"
 
 
 def ReadJsonl(raw_tweets_file_name, corpus_file_name):
@@ -8,6 +14,9 @@ def ReadJsonl(raw_tweets_file_name, corpus_file_name):
 
     # loop over json list file
     for line in raw_tweets_file:
+        if validateJSON(line) == False:
+            continue
+
         # parse as json object
         json_object = json.loads(line)
 
@@ -50,19 +59,10 @@ def ReadJsonl(raw_tweets_file_name, corpus_file_name):
     corpus_file.close()
 
 
-def checkRetweet(tweet):
-    for word in tweet:
-        word = word.lower()
-
-        if word == "rt":
-            return True
-
-    return False
+def main():
+    # process input data and save it to file
+    ReadJsonl(RAW_TWEETS_FILE_NAME, CORPUS_FILE_NAME)
 
 
-def hasData(tweet):
-    for word in tweet:
-        if word != "" and word != " ":
-            return True
-
-    return False
+if __name__ == "__main__":
+    main()

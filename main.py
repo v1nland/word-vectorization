@@ -1,19 +1,14 @@
-from generate_model import GenerateModel
-from read_jsonl import ReadJsonl
-from write_file import WriteFile
+from typing import Optional
+from fastapi import FastAPI
+from query_model import QueryModel
 
-RAW_TWEETS_FILE_NAME = "data/earthquake_hurricane.jsonl"
-CORPUS_FILE_NAME = "corpus/earthquake_hurricane.corpus"
-MODEL_FILE_NAME = "models/earthquake_hurricane.w2v"
+app = FastAPI()
 
 
-def main():
-    # process input data and save it to file
-    # ReadJsonl(RAW_TWEETS_FILE_NAME, CORPUS_FILE_NAME)
+@app.get("/models/{model_name}/{command}")
+def query_model(model_name: str, command: str, query: Optional[str] = None):
+    model_file_name = "models/{}.w2v".format(model_name)
 
-    # generate w2v model
-    GenerateModel(CORPUS_FILE_NAME, MODEL_FILE_NAME)
+    result = QueryModel(model_file_name, command, query)
 
-
-if __name__ == "__main__":
-    main()
+    return {"response": result}

@@ -1,23 +1,22 @@
 from utils import validateJSON
 
+TWEETS_NUMBER = 20
 FILES = ["earthquake", "hurricane"]
 
 
 def main():
-    # Open output file in write mode
-    with open("data/" + "_".join(FILES) + ".jsonl", "w") as out_file:
-
-        # Iterate through files list
+    with open("data/first_" + "_".join(FILES) + ".jsonl", "w") as out_file:
         for file in FILES:
-
-            # Open each file in read mode
             with open("data/" + file + ".jsonl") as in_file:
+                counter = 0
 
                 for line in in_file:
+                    if counter >= TWEETS_NUMBER:
+                        break
 
-                    # read the data from files and write it in file3
                     if validateJSON(line):
                         out_file.write(line)
+                        counter = counter + 1
 
 
 if __name__ == "__main__":

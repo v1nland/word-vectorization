@@ -2,11 +2,13 @@
 corpus/*
 data/*
 models/*
+train_set/*
 
 # keep examples
 !corpus/example.corpus
 !data/example.jsonl
 !models/example.w2v
+!train_set/example.jsonl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
