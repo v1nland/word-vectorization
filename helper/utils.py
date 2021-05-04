@@ -35,3 +35,7 @@ def writeFile(file_name, content_list):
 
         f.write(line)
     f.close()
+
+
+def getModelRoute(model_name):
+    return "models/{}.w2v".format(model_name)

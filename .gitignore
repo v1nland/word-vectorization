@@ -2,12 +2,14 @@
 corpus/*
 data/*
 models/*
+parsed_train_set/*
 train_set/*
 
 # keep examples
 !corpus/example.corpus
 !data/example.jsonl
 !models/example.w2v
+!parsed_train_set/example.jsonl
 !train_set/example.jsonl
 
 # Byte-compiled / optimized / DLL files
