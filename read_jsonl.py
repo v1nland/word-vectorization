@@ -1,16 +1,16 @@
+# run as: python3 read_jsonl.py data/example.jsonl corpus/example.corpus
+
+import sys
 import json
 import re
 from helper.utils import validateJSON
 from helper.utils import checkRetweet
 from helper.utils import hasData
 
-RAW_TWEETS_FILE_NAME = "data/example.jsonl"
-CORPUS_FILE_NAME = "corpus/example.corpus"
-
 
 def ReadJsonl(raw_tweets_file_name, corpus_file_name):
-    raw_tweets_file = open(raw_tweets_file_name, "r")
-    corpus_file = open(corpus_file_name, "w+")
+    raw_tweets_file = open("data/" + raw_tweets_file_name + ".jsonl", "r")
+    corpus_file = open("corpus/" + corpus_file_name + ".corpus", "w+")
 
     # loop over json list file
     for line in raw_tweets_file:
@@ -60,6 +60,15 @@ def ReadJsonl(raw_tweets_file_name, corpus_file_name):
 
 
 def main():
+    if len(sys.argv) < 3:
+        print(
+            "correct usage: python3 read_jsonl.py <input_raw_tweets_file_name> <output_corpus_file_name>"
+        )
+        return
+
+    RAW_TWEETS_FILE_NAME = sys.argv[1]
+    CORPUS_FILE_NAME = sys.argv[2]
+
     # process input data and save it to file
     ReadJsonl(RAW_TWEETS_FILE_NAME, CORPUS_FILE_NAME)
 

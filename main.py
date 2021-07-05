@@ -12,10 +12,11 @@ import gensim.models.word2vec as w2v
 # project files
 import query_model
 from helper.utils import getModelRoute
+from vectorizate_set import ProcessLine
 
 app = FastAPI()
 
-
+# w2v endpoints
 @app.get("/models/{model_name}/similar")
 def get_most_similar(model_name: str, query: Optional[str] = None):
     model = w2v.Word2Vec.load(getModelRoute(model_name))
@@ -43,63 +44,22 @@ def exists(model_name: str, query: Optional[str] = None):
     return {"response": result}
 
 
-@app.get("/models/{model_name}/training")
-def get_training_data(
-    model_name: str, query: Optional[str] = None, dim: Optional[int] = 15
-):
-    model = w2v.Word2Vec.load(getModelRoute(model_name))
-    train_file = open("train_set/" + model_name + ".train_set", "r")
-
-    result = []
-    for line in train_file:
-        json_object = json.loads(line)
-
-        tweet_type = json_object["type"]
-        tweet_data = json_object["data"].split()
-
-        if len(tweet_data) < dim:
-            while len(tweet_data) < dim:
-                tweet_data.append("")
-        else:
-            del tweet_data[dim:]
-
-        tweet_words_data = []
-        for word in tweet_data:
-            if query_model.Exists(model, word):
-                word_vector = query_model.Vector(model, word)
-                tweet_words_data.append({"word": word, "vector": word_vector})
-            else:
-                word_vector = [0] * 200
-                tweet_words_data.append({"word": word, "vector": word_vector})
-
-        result.append(
-            {
-                "type": tweet_type,
-                "words": len(tweet_words_data),
-                "data": tweet_words_data,
-            }
-        )
-
-    return {"response": result}
-
-
+# custom endpoints
 class GetTweetRequest(BaseModel):
-    tweet: List[str]
+    tweet_type: int
+    tweet_data: str
 
 
 @app.post("/models/{model_name}/tweet")
-def exists(model_name: str, req: GetTweetRequest, dim: Optional[int] = 15):
-    result = []
+def exists(model_name: str, req: GetTweetRequest, words_per_tweet: Optional[int] = 16):
+    model = w2v.Word2Vec.load(getModelRoute(model_name))
 
-    for word in req.tweet:
-        if query_model.Exists(model_name, word):
-            word_vector = query_model.Vector(model_name, word)
-            result.append(word_vector)
-        else:
-            word_vector = [0] * 200
-            result.append(word_vector)
+    tweet_type, tweet_words_data = ProcessLine(
+        model, words_per_tweet, req.tweet_type, req.tweet_data.split()
+    )
 
-    while len(result) < dim:
-        result.append([0] * 200)
-
-    return {"dim": len(result), "tweets": result}
+    return {
+        "type": tweet_type,
+        "words": len(tweet_words_data),
+        "data": tweet_words_data,
+    }

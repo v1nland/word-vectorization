@@ -2,15 +2,17 @@
 corpus/*
 data/*
 models/*
-parsed_train_set/*
-train_set/*
+set/*
+shuffled_set/*
+vectorizated_shuffled_set/*
 
 # keep examples
 !corpus/example.corpus
 !data/example.jsonl
 !models/example.w2v
-!parsed_train_set/example.jsonl
-!train_set/example.jsonl
+!set/example.set
+!shuffled_set/example.shuffled_set
+!vectorizated_shuffled_set/example.vectorizated_shuffled_set
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
